@@ -1,0 +1,99 @@
+\documentclass[reprint,amsmath,amssymb,aps,showpacs,superscriptaddress,prl]{revtex4-1}
+
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{epsfig}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{braket}
+\usepackage{color}
+\usepackage{epstopdf}
+\epstopdfsetup{update}
+\usepackage{hyperref}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{bibentry}
+\usepackage{multirow}
+\usepackage[caption=false]{subfig}
+\newcommand{\ba}{\begin{eqnarray}}
+\newcommand{\ea}{\end{eqnarray}}
+\newcommand{\bd}{\begin{displaymath}}
+\renewcommand{\v}[1]{{\bf #1}}
+\newcommand{\nn}{\nonumber \\}
+
+\graphicspath{{figures/}}% Put all figures in this directory.
+
+\begin{document}
+%
+\title{Skyrmions}
+
+\author{Vinit Kumar Singh}
+\email[Electronic address:$~~$]{vinitsingh911@gmail.com}
+\affiliation{Department of Physics, Indian Institute of Technology, Kharagpur 721302, India}
+\date{\today}
+
+\begin{abstract}
+Verifying the analytical calculation of the phase diagram of HDMZ Model using Monte-Carlo simulations. Later Anisotropy is introduced to obtained the phase diagram by varying Anisotropy and Magnetic Field. 
+\end{abstract}
+%\pacs{75.78.-n, 75.10.Hk, 75.70.Kw, 75.78.Cd}
+\maketitle
+
+Monte Carlo Algorithms  (Book on Monte-Carlo Algorithms)
+The continuous lattice of the two-dimensional magnet is discretized.
+
+Heisenberg-Dzyaloshinskii-Moriya-Zeeman (HDMZ) spin Hamiltonian:
+
+\ba && H_{\rm HDMZ} = -J \sum_{i\in L^2} \v n_i \cdot (\v n_{i+\hat{x}} + \v n_{i+\hat{y}} ) \nn
+& & + D \sum_i ( \hat{y} \cdot \v n_i \! \times \! \v n_{i\! +\! \hat{x}} - \hat{x} \cdot \v n_i \times \v n_{i\! +\! \hat{y}} )  - \v B \cdot \sum_i \v n_i .  \label{eq:HDMZ} \ea
+%
+
+Annealing Schedule
+The final spin configuration obtained is expected to have minimum energy because the Hamiltonian is minimized in every iteration. But in most cases, the solution does not always reach the global minimum, but instead, it gets stuck in some local minimum. Simulated annealing is a technique used to ensure that the final configuration obtained has the least possible energy. 
+
+
+How annealing is done...
+We start with a high temperature and slowly reduce the temperature. 
+
+
+Annealing schedule used by me.  
+Usually, the linear reduction in temperature is performed to reach the final low temperature. It is found that there are faster and efficient methods to perform annealing. 
+Exponential annealing. 
+
+
+Detecting Phases.
+Once the computation is done, all we are left with is to detect phases. 
+It is difficult to label phases by merely looking at the spin configuration image. 
+In this case, we take the help of two special features chirality and total magnetization to perform the task of phase prediction.
+
+
+Skyrmion 
+high chirality but the mediocre magnetization
+
+
+Spiral 
+both chirality and magnetization is low
+
+
+Ferromagnet
+low chirality but high magnetization. 
+
+
+
+\begin{figure}[h]
+\includegraphics[scale=0.3]{0_0.png}
+\caption{(left column) One hundred leading eigenvalues $\lambda_k$ of the correlation matrix, normalized by the largest value $\lambda_1$. Completely overlapping plots are obtained for average squares $\langle |\alpha_k |^2 \rangle / \langle |\alpha_1 |^2 \rangle$ [see Eq. (\ref{eq:alpha_k}) for definition]. (right column) The first ($k=1$) eigen-image of each phase. The $z$-component, $[{\bf I}_k ]_{iz}$, is used for the plot. Rest of the leading eigen-images are shown in SM. }\label{fig:0}
+\end{figure}
+
+
+\begin{thebibliography}{99}
+
+\bibitem{zhai17} C. Wang and H. Zhai, Phys. Rev. B {\bf 96}, 144432 (2017).
+
+
+\end{thebibliography}
+
+%\bibliographystyle{apsrev}
+%\bibliography{reference}
+
+
+\end{document}

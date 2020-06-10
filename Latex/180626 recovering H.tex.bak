@@ -1,0 +1,102 @@
+\documentclass[reprint,amsmath,amssymb,aps,showpacs,superscriptaddress,prb]{revtex4-1}
+
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{epsfig}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{braket}
+\usepackage{color}
+\usepackage{epstopdf}
+\epstopdfsetup{update}
+\usepackage{hyperref}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{bibentry}
+\usepackage{multirow}
+\usepackage[caption=false]{subfig}
+\newcommand{\ba}{\begin{eqnarray}}
+\newcommand{\ea}{\end{eqnarray}}
+\newcommand{\bd}{\begin{displaymath}}
+\renewcommand{\v}[1]{{\bf #1}}
+\newcommand{\nn}{\nonumber \\}
+
+\graphicspath{{figures/}}% Put all figures in this directory.
+
+\begin{document}
+%
+\title{Statistical Recovery of the Hamiltonian}
+
+\author{Vinit Kumar Singh}
+\email[Electronic address:$~~$]{vinitsingh911@gmail.com}
+\affiliation{Department of Physics, Indian Institute of Technology, Kharagpur 721302, India}
+\author{Jung Hoon Han}
+\email[Electronic address:$~~$]{hanjh@skku.edu}
+\affiliation{Department of Physics, Sungkyunkwan University, Suwon 16419, Korea}
+\date{\today}
+
+\begin{abstract}
+\end{abstract}
+%\pacs{75.78.-n, 75.10.Hk, 75.70.Kw, 75.78.Cd}
+\maketitle
+
+Suppose we had a Hamiltonian
+
+\ba H = \sum_{ij} J_{ij} \sigma_i \sigma_j \ea
+with each $\sigma_i = \pm$ serving as a binary variable and the interaction $J_{ij}$ extended over an arbitrary pair of sites $ij$ of the finite $L\times L$ lattice. We are  given equilibrium configurations for such Hamiltonian through, say, Monte Carlo simulation. Given such equilibrium configurations at one's disposal, is it possible to recover the original Hamiltonian from which those configuration came? In other words, can we accurately recover all $J_{ij}$ from analysis of the configurations alone without any prior knowledge about the Hamiltonian? And can we use some machine learning algorithm in making such recovery?
+
+This is in part inspired by the recent proposal~\cite{qi18} that a single eigenstate contains enough information to allow the faithful reconstruction of the original quantum Hamiltonian. I am asking for an analogue question in the classical equilibrium mechanics. One method that is guaranteed to work is to train the ML on the energy of each configuration. Since there are at most $O(N^2)$ number of parameters in any given Hamiltonian ($N$ is the number of lattice sites), training set consisting of more than $N^2$ number of configurations will eventually get all the parameters of the Hamiltonian right.
+
+This is not quite legal, though, since from the outset the assumption was that we do not know what the microscopic Hamiltonian was. We could instead use information gathered from the equilibrium configurations, because they were given to us from the outset. The way the information about the configuration is gathered in equilibrium statistical mechanics is by measuring the correlation functions
+
+\ba {\cal C}^{(O)}_{ij} = \langle O_i O_j \rangle - \langle O_i \rangle \langle O_j \rangle. \ea
+%
+Suppose the as-yet unknown Hamiltonian has the most general form
+
+\ba H= \sum_{1 \le i,j \le N} h_{ij} \sigma_i \sigma_j, \label{eq:general-H} \ea
+%
+where $N$ labels the total number of degrees of freedom. For the Ising model $N$ also equals the number of sites in the lattice, and for the Heisenberg model $N$ will be three times the lattice sites. A well-known theorem of equilibrium statistical mechanics says that
+
+\ba \langle H^2 \rangle - \langle H \rangle^2 = T^2 C(T) \ea
+where $C(T)$ refers to the specific heat. In terms of the general Hamiltonian (\ref{eq:general-H}), we get
+
+
+\ba \langle H^2 \rangle  - \langle H \rangle^2 = \sum_{ij, kl} h_{ij} C_{ij, kl } h_{kl}  \label{eq:condition1} \ea
+where the four-point correlation matrix $C_{ij,kl}$ would be
+
+\ba C_{ij, kl} = \langle \sigma_i \sigma_j \sigma_i \sigma_l \rangle- \langle \sigma_i \sigma_j \rangle \langle \sigma_k \sigma_l \rangle  = C_{kl, ij} . \ea
+One can also treat $A=(ij)$ and $B=(kl)$ as one-dimensional array of size $N^2$, and write the condition (\ref{eq:condition1}) as
+
+\ba \sum_{A,B} h_A C_{AB} h_B = {\bf h}^T {\bf C} {\bf h} = T^2 C(T) .\ea
+The spectral decomposition of the Hermitian matrix ${\bf C} = \sum_\alpha \lambda_\alpha {\bf x}^T_\alpha {\bf x}_\alpha$ as
+
+\ba \sum_\alpha \lambda_\alpha ({ \bf h}^T {\bf x_\alpha }) ({ \bf x_\alpha }^T {\bf h} ) = \sum_\alpha \lambda_\alpha ({ \bf x_\alpha }^T {\bf h})^2 = T^2 C(T) . \ea
+Positivity on the right-hand side is guaranteed. In order to reproduce 0 we must set all terms $\lambda_\alpha  ( {\bf x_\alpha }^T {\bf h} )^2  =0$ for every $\alpha$, requiring either  $\lambda_\alpha = 0$ or ${\bf x_\alpha }^T {\bf h} =0$. What happens at $T=0$ is that the correlation matrix ${\bf C}$ vanishes identically.
+
+Suppose the heat capacity $C(T)$ is known along with the four-point correlation function, both
+as a function of temperature $T$. In a translationally invariant system we can write $h_{ij} = h_{i, i+r} \equiv h_{r}$ and $h_{kl} = h_{k,k+r'} \equiv h_{r'} $ with $r,r' \in L^2$ both spanning the lattice. Carrying out the partial sum over $i,k$ gives
+
+\ba & & \sum_{i,r,k,r'} h_{r} \Bigl( \sum_{i,k} C_{i,i+r;k,k+r'} \Bigr)  h_{r'} \nn
+& & ~~~  = \sum_{r,r'} h_r C_{r,r'} h_{r'} = T^2 C(T) . \ea
+Having the complete knowledge of $C_{r,r'}$ and $C(T)$ for all temperatures, figuring out $h_r$ appears to be a problem of least-square fitting. Since $C_{r,r'} = C_{r'r}$, one can further apply spectral decomposition to the reduced four-point correlation function
+
+\ba C_{r,r'} = \sum_\alpha \lambda_\alpha [ I^{(\alpha)} ]_r [ I^{(\alpha)} ]_{r'} \ea
+and write
+
+\ba T^2 C(T) &=& \sum_\alpha \lambda_\alpha \sum_r (h_r [ I^{(\alpha)} ]_r ) (h_{r'} [ I^{(\alpha)} ]_{r'} ) \nn
+%
+& =& \sum_\alpha \lambda_\alpha \Bigl( \sum_r h_r [ I^{(\alpha)} ]_r \Bigr)^2 . \label{eq:getting-h}   \ea
+
+The procedure goes as follows. (1) Work out the four-point correlation function $C_{ij,kl}$ and reduce it to $C_{r,r'}$ by summing over $i,k$. This will be done for every temperature $T$ where the four-point and the specific heat data are available. (2) Do spectral decomposition of $C_{r,r'}$ and obtain the leading eigenvalues and eigenvectors. (3) The desired Hamiltonian vector $h_r$ is the one that satisfies Eq. (\ref{eq:getting-h}) as accurately as possible. This can be done by least-square fitting or gradient descent method. This way, we recover the original Hamiltonian $H= \sum_{i,r} h_r \sigma_i \sigma_{i+r}$.
+
+\begin{thebibliography}{99}
+
+\bibitem{qi17} Xiao-Liang Qi and Daniel Ranard, arXiv:1712.01850 (2017).
+
+\end{thebibliography}
+
+%\bibliographystyle{apsrev}
+%\bibliography{reference}
+
+
+\end{document}
