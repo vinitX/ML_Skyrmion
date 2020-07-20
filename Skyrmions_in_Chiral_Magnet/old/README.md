@@ -1,1 +1,0 @@
-# Skyrmions-in-Chiral-Magnets
